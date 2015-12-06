@@ -5,6 +5,7 @@ public class FrogController : MonoBehaviour {
 	public Transform RotationPoint;
 	public float RotationSpeed; 
 	public Animator FrogAnimator;
+	public AudioSource FrogAudioSource;
 
 	void Start () {
 		Level1Manager.ActiveObjectPointed += NextJump;
@@ -15,6 +16,7 @@ public class FrogController : MonoBehaviour {
 
 	public void NextJump(GameObject go)
 	{
+		if(FrogAudioSource != null) FrogAudioSource.Play();
 		StartCoroutine(RotateAndJump(go));
 	}
 	
