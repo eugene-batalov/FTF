@@ -15,7 +15,6 @@ public class PointerDownReceiver : MonoBehaviour {
 
 	public void PointerDownReceived()
 	{
-		Debug.Log("click");
 		if(GameObjectToSend == null) GameObjectToSend = gameObject;
 		if(Level1Manager.ActiveObjectPointed != null) Level1Manager.ActiveObjectPointed(GameObjectToSend);
 	}
