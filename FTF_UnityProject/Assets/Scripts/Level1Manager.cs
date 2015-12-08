@@ -13,8 +13,14 @@ public class Level1Manager : MonoBehaviour {
 
 	public GameObject[] Kuvshinki;
 	public AudioSource HAHA1;
+	
 	public Text LevelText;
 	public Text LevelDownText;
+
+	public Text RightWayText;
+	public Text IdleText;
+	public Text CurrentJumpsBeforeNextLevelText;
+	public Text CurrentCorrectJumpsSerieText;
 
 	public int correctJumpsBeforeNextLevel = 10;
 	
@@ -37,6 +43,17 @@ public class Level1Manager : MonoBehaviour {
 		ActiveObjectPointed += RightOrWrongKuvshinkaPointed;
 		CurrentJumpsBeforeNextLevel = correctJumpsBeforeNextLevel;
 		CurrentCorrectJumpsSerie = 0;
+	}
+
+	void Update()
+	{
+		RightWayText.text = "Right Way: ";
+		for(var i = rightWay.Count-1; i > -1; i--)
+			RightWayText.text += ((GameObject)rightWay[i]).transform.parent.name.Replace("kyvshinka","") + ((i == 0)? "" : ", ");
+		IdleText.text = "Idle: " + Idle;
+		LevelDownText.text = "LevelDown: " + LevelDown;
+		CurrentJumpsBeforeNextLevelText.text = "CurrentJumpsBeforeNextLevel: " + CurrentJumpsBeforeNextLevel;
+		CurrentCorrectJumpsSerieText.text = "CurrentCorrectJumpsSerie: " + CurrentCorrectJumpsSerie;
 	}
 
 	public void LevelUp()
@@ -63,14 +80,15 @@ public class Level1Manager : MonoBehaviour {
 		}
 		else
 		{
+			if(LevelDownText.gameObject.activeSelf) return; // две ошибки подряд не считаем
 			Debug.Log("MISTAKE!");
 			HAHA1.Play();
 			if(CurrentCorrectJumpsSerie < 5 && rightWay.Count > 3) 
 			{
 				LevelDownText.gameObject.SetActive(true);
-				LevelText.text = "Level " + (rightWay.Count - 2);
+				LevelText.text = "Level " + (rightWay.Count - 3);
 			}
-			CurrentCorrectJumpsSerie = 0;
+			CurrentCorrectJumpsSerie /= 2;
 		}
 	}
 
