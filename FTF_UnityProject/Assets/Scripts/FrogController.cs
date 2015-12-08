@@ -5,16 +5,39 @@ public class FrogController : MonoBehaviour {
 	public Transform RotationPoint;
 	public float RotationSpeed; 
 	public Animator FrogAnimator;
+	public AudioSource FrogAudioSource;
+	public bool LeadingFrog;
 
-	void Start () {
-		Level1Manager.ActiveObjectPointed += NextJump;
+	IEnumerator Start () {
+		if(!LeadingFrog)
+		{
+			Level1Manager.CorrectKuvshinkaPointed += NextJump;
+			while(Level1Manager.Instance == null) yield return new WaitForEndOfFrame();
+			Level1Manager.Instance.SetMyFrogPosition(transform.parent.gameObject);
+			while(Level1Manager.NextTurn == null) yield return new WaitForEndOfFrame();
+			Level1Manager.NextTurn();
+		}
+		else 
+		{
+			Level1Manager.Idle = true;
+			Level1Manager.NextTurn += ()=> StartCoroutine(WaitAndStartNextTurn());
+			while(Level1Manager.Instance == null) yield return new WaitForEndOfFrame();
+			Level1Manager.Instance.SetLeadingFrogPosition(transform.parent.gameObject);
+		}
 	}
 
-	void Update () {
+	IEnumerator WaitAndStartNextTurn()
+	{
+		Level1Manager.Idle = false;
+		yield return new WaitForSeconds(0.1f * Level1Manager.Instance.CurrentJumpsBeforeNextLevel);
+		GameObject k = Level1Manager.Instance.GetFreeKuvshinka();
+		Level1Manager.Instance.SetLeadingFrogPosition(k);
+		NextJump(k);
 	}
 
 	public void NextJump(GameObject go)
 	{
+		if(FrogAudioSource != null) FrogAudioSource.Play();
 		StartCoroutine(RotateAndJump(go));
 	}
 	
@@ -42,5 +65,22 @@ public class FrogController : MonoBehaviour {
 		}
 		transform.SetParent(go.transform);
 		transform.localPosition = Vector3.zero;
+		if(!LeadingFrog) 
+		{
+			if(Level1Manager.Instance.LevelDownText.gameObject.activeSelf)
+			{
+				Level1Manager.Instance.LevelDownText.gameObject.SetActive(false);
+				yield break;
+			}
+			if(Level1Manager.NextTurn != null)Level1Manager.NextTurn();
+		}
+		else
+		{
+			if(Level1Manager.Instance.CurrentJumpsBeforeNextLevel < 1) 
+			{
+				Level1Manager.Instance.LevelUp();
+			}
+			else Level1Manager.Idle = true;
+		}
 	}
 }
