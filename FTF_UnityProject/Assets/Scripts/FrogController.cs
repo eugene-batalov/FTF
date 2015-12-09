@@ -60,7 +60,7 @@ public class FrogController : MonoBehaviour {
 		if(FrogAnimator != null) FrogAnimator.Play("Jump");
 		for(var i=0; i<15; i++) // количество кадров анимации прыжка
 		{
-			transform.Translate(target/Mathf.Pow(2f, i+1f), Space.World);
+			transform.Translate(target/Mathf.Pow(2.005f, i+1f), Space.World);
 			yield return new WaitForSeconds(1f/30f); // частота кадров анимации прыжка
 		}
 		transform.SetParent(go.transform);
