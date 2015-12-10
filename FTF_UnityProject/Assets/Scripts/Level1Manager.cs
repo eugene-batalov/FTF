@@ -51,7 +51,7 @@ public class Level1Manager : MonoBehaviour {
 		for(var i = rightWay.Count-1; i > -1; i--)
 			RightWayText.text += ((GameObject)rightWay[i]).transform.parent.name.Replace("kyvshinka","") + ((i == 0)? "" : ", ");
 		IdleText.text = "Idle: " + Idle;
-		LevelDownText.text = "LevelDown: " + LevelDown;
+//		LevelDownText.text = "LevelDown: " + LevelDown;
 		CurrentJumpsBeforeNextLevelText.text = "CurrentJumpsBeforeNextLevel: " + CurrentJumpsBeforeNextLevel;
 		CurrentCorrectJumpsSerieText.text = "CurrentCorrectJumpsSerie: " + CurrentCorrectJumpsSerie;
 	}
@@ -82,7 +82,7 @@ public class Level1Manager : MonoBehaviour {
 		{
 			if(LevelDownText.gameObject.activeSelf) return; // две ошибки подряд не считаем
 			Debug.Log("MISTAKE!");
-			HAHA1.Play();
+			if(HAHA1 != null && SoundsOnOff.Instance.SoundsOn == 1)HAHA1.Play();
 			if(CurrentCorrectJumpsSerie < 5 && rightWay.Count > 3) 
 			{
 				LevelDownText.gameObject.SetActive(true);

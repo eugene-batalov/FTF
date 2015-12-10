@@ -29,7 +29,8 @@ public class FrogController : MonoBehaviour {
 	IEnumerator WaitAndStartNextTurn()
 	{
 		Level1Manager.Idle = false;
-		yield return new WaitForSeconds(0.1f * Level1Manager.Instance.CurrentJumpsBeforeNextLevel);
+		yield return new WaitForEndOfFrame();
+//		yield return new WaitForSeconds(0.1f * Level1Manager.Instance.CurrentJumpsBeforeNextLevel);
 		GameObject k = Level1Manager.Instance.GetFreeKuvshinka();
 		Level1Manager.Instance.SetLeadingFrogPosition(k);
 		NextJump(k);
@@ -37,12 +38,13 @@ public class FrogController : MonoBehaviour {
 
 	public void NextJump(GameObject go)
 	{
-		if(FrogAudioSource != null) FrogAudioSource.Play();
+		if(FrogAudioSource != null && SoundsOnOff.Instance.SoundsOn == 1) FrogAudioSource.Play();
 		StartCoroutine(RotateAndJump(go));
 	}
 	
 	IEnumerator RotateAndJump(GameObject go)
 	{
+		Level1Manager.Idle = true; // можно делать следующий ход
 		var target = go.transform.position - RotationPoint.transform.position;
 		var angle = Vector3.Angle(transform.up, target);
 		if(FrogAnimator != null) FrogAnimator.Play("Rotate");
@@ -80,7 +82,7 @@ public class FrogController : MonoBehaviour {
 			{
 				Level1Manager.Instance.LevelUp();
 			}
-			else Level1Manager.Idle = true;
+//			else Level1Manager.Idle = true;
 		}
 	}
 }
