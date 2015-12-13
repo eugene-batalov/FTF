@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class Level1Manager : MonoBehaviour {
@@ -11,7 +12,7 @@ public class Level1Manager : MonoBehaviour {
 	public static bool Idle;
 	public static bool LevelDown;
 
-	public GameObject[] Kuvshinki;
+
 	public AudioSource HAHA1;
 	
 	public Text LevelText;
@@ -35,6 +36,8 @@ public class Level1Manager : MonoBehaviour {
 	}
 
 	ArrayList rightWay;
+	Dictionary<string,GameObject> Strelki;
+	GameObject[] Kuvshinki;
 
 	// Use this for initialization
 	void Start () {
@@ -43,13 +46,27 @@ public class Level1Manager : MonoBehaviour {
 		ActiveObjectPointed += RightOrWrongKuvshinkaPointed;
 		CurrentJumpsBeforeNextLevel = correctJumpsBeforeNextLevel;
 		CurrentCorrectJumpsSerie = 0;
+		Init();
+	}
+
+	void Init()
+	{
+		Strelki = new Dictionary<string, GameObject>();
+		GameObject[] strelki_array = GameObject.FindGameObjectsWithTag("strelka");
+		Kuvshinki = GameObject.FindGameObjectsWithTag("kuvshinka");
+		Debug.Log(Kuvshinki.Length + " kuvshinok added");
+
+		foreach(var strelka in strelki_array)
+		{
+			Strelki.Add(strelka.name, strelka);
+		}
 	}
 
 	void Update()
 	{
 		RightWayText.text = "Right Way: ";
 		for(var i = rightWay.Count-1; i > -1; i--)
-			RightWayText.text += ((GameObject)rightWay[i]).transform.parent.name.Replace("kyvshinka","") + ((i == 0)? "" : ", ");
+			RightWayText.text += ((GameObject)rightWay[i]).transform.parent.parent.name.Replace("kyvshinka","") + ((i == 0)? "" : ", ");
 		IdleText.text = "Idle: " + Idle;
 //		LevelDownText.text = "LevelDown: " + LevelDown;
 		CurrentJumpsBeforeNextLevelText.text = "CurrentJumpsBeforeNextLevel: " + CurrentJumpsBeforeNextLevel;
