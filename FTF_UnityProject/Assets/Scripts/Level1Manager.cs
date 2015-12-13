@@ -13,7 +13,7 @@ public class Level1Manager : MonoBehaviour {
 	public static bool LevelDown;
 
 
-	public AudioSource HAHA1;
+	public AudioSource Haha1;
 	
 	public Text LevelText;
 	public Text LevelDownText;
@@ -23,7 +23,7 @@ public class Level1Manager : MonoBehaviour {
 	public Text CurrentJumpsBeforeNextLevelText;
 	public Text CurrentCorrectJumpsSerieText;
 
-	public int correctJumpsBeforeNextLevel = 10;
+	public int CorrectJumpsBeforeNextLevel = 10;
 	
 	public int CurrentJumpsBeforeNextLevel {
 		get;
@@ -34,40 +34,60 @@ public class Level1Manager : MonoBehaviour {
 		get;
 		private set;
 	}
+    public int Level
+    {
+        get;
+        private set;
+    }
 
-	ArrayList rightWay;
-	Dictionary<string,GameObject> Strelki;
-	GameObject[] Kuvshinki;
+	ArrayList _rightWay;
+    Dictionary<string, SpriteRenderer> _strelki;
+	GameObject[] _kuvshinki;
+    public bool _showRightWay;
 
-	// Use this for initialization
+    public void ShowRightWayOn()
+    {
+        _showRightWay = true;
+    }
 	void Start () {
 		Instance = this;
-		rightWay = new ArrayList();
+		_rightWay = new ArrayList();
 		ActiveObjectPointed += RightOrWrongKuvshinkaPointed;
-		CurrentJumpsBeforeNextLevel = correctJumpsBeforeNextLevel;
+		CurrentJumpsBeforeNextLevel = CorrectJumpsBeforeNextLevel;
 		CurrentCorrectJumpsSerie = 0;
 		Init();
+	    Level = 1;
+	    _showRightWay = false;
 	}
 
 	void Init()
 	{
-		Strelki = new Dictionary<string, GameObject>();
-		GameObject[] strelki_array = GameObject.FindGameObjectsWithTag("strelka");
-		Kuvshinki = GameObject.FindGameObjectsWithTag("kuvshinka");
-		Debug.Log(Kuvshinki.Length + " kuvshinok added");
+        _strelki = new Dictionary<string, SpriteRenderer>();
+		var strelkiArray = GameObject.FindGameObjectsWithTag("strelka");
+		_kuvshinki = GameObject.FindGameObjectsWithTag("kuvshinka");
+//		Debug.Log(_kuvshinki.Length + " kuvshinok added");
 
-		foreach(var strelka in strelki_array)
+		foreach(var strelka in strelkiArray)
 		{
-			Strelki.Add(strelka.name, strelka);
+//            Debug.Log("key: " + strelka.name + " added");
+			_strelki.Add(strelka.name, strelka.GetComponent<SpriteRenderer>());
 		}
 	}
 
 	void Update()
 	{
+        LevelText.text = "Level " + Level;
 		RightWayText.text = "Right Way: ";
-		for(var i = rightWay.Count-1; i > -1; i--)
-			RightWayText.text += ((GameObject)rightWay[i]).transform.parent.parent.name.Replace("kyvshinka","") + ((i == 0)? "" : ", ");
-		IdleText.text = "Idle: " + Idle;
+	    for (var i = _rightWay.Count - 1; i > -1; i--)
+	    {
+	        RightWayText.text += ((GameObject) _rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "") +
+	                             ((i == 0) ? "" : ", ");
+	        if (i <= 0) continue;
+            var from = ((GameObject)_rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "");
+            var to = ((GameObject)_rightWay[i - 1]).transform.parent.parent.name.Replace("kyvshinka", "");
+	        _strelki[@from+"-"+to].enabled = _showRightWay;
+	    }
+	    IdleText.text = "Idle: " + Idle;
 //		LevelDownText.text = "LevelDown: " + LevelDown;
 		CurrentJumpsBeforeNextLevelText.text = "CurrentJumpsBeforeNextLevel: " + CurrentJumpsBeforeNextLevel;
 		CurrentCorrectJumpsSerieText.text = "CurrentCorrectJumpsSerie: " + CurrentCorrectJumpsSerie;
@@ -75,23 +95,25 @@ public class Level1Manager : MonoBehaviour {
 
 	public void LevelUp()
 	{
-		LevelText.text = "Level " + (rightWay.Count - 1);
-		CurrentJumpsBeforeNextLevel = correctJumpsBeforeNextLevel;
+		Level++;
+		CurrentJumpsBeforeNextLevel = CorrectJumpsBeforeNextLevel;
 		NextTurn();
 	}
 
 	void RightOrWrongKuvshinkaPointed(GameObject go)
 	{
 		if(!Idle) return;
-		if(go == rightWay[0] || go == rightWay[rightWay.Count-1]) 
+	    _showRightWay = false;
+        Update();
+		if(go == (GameObject) _rightWay[0] || go == (GameObject) _rightWay[_rightWay.Count-1]) 
 		{
 			Debug.Log("Frog pointed!");
 			return;
 		}
-		if(go == rightWay[rightWay.Count-2])
+		if(go == (GameObject) _rightWay[_rightWay.Count-2])
 		{
 			CorrectKuvshinkaPointed(go);
-			rightWay.RemoveAt(rightWay.Count-1);
+			_rightWay.RemoveAt(_rightWay.Count-1);
 			CurrentJumpsBeforeNextLevel--;
 			CurrentCorrectJumpsSerie++;
 		}
@@ -99,11 +121,11 @@ public class Level1Manager : MonoBehaviour {
 		{
 			if(LevelDownText.gameObject.activeSelf) return; // две ошибки подряд не считаем
 			Debug.Log("MISTAKE!");
-			if(HAHA1 != null && SoundsOnOff.Instance.SoundsOn == 1)HAHA1.Play();
-			if(CurrentCorrectJumpsSerie < 5 && rightWay.Count > 3) 
+			if(Haha1 != null && SoundsOnOff.Instance.SoundsOn == 1)Haha1.Play();
+			if(CurrentCorrectJumpsSerie < 5 && _rightWay.Count > 3) 
 			{
 				LevelDownText.gameObject.SetActive(true);
-				LevelText.text = "Level " + (rightWay.Count - 3);
+			    Level--;
 			}
 			CurrentCorrectJumpsSerie /= 2;
 		}
@@ -111,22 +133,22 @@ public class Level1Manager : MonoBehaviour {
 
 	public void SetMyFrogPosition(GameObject go)
 	{
-		rightWay.Add(go);
+		_rightWay.Add(go);
 	}
 
 	public void SetLeadingFrogPosition(GameObject go)
 	{
-		if(rightWay.Count < 1) rightWay.Add(go);
-		else rightWay.Insert(0, go);
+		if(_rightWay.Count < 1) _rightWay.Add(go);
+		else _rightWay.Insert(0, go);
 	}
 
 	public GameObject GetFreeKuvshinka () {
 		GameObject k;
 		do
 		{
-			k = Kuvshinki[UnityEngine.Random.Range(0,Kuvshinki.Length)];
+			k = _kuvshinki[UnityEngine.Random.Range(0,_kuvshinki.Length)];
 		}
-		while(rightWay.Contains(k));
+		while(_rightWay.Contains(k));
 		return k;
 	}
 }
