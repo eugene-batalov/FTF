@@ -43,7 +43,8 @@ public class Level1Manager : MonoBehaviour {
 	ArrayList _rightWay;
     Dictionary<string, SpriteRenderer> _strelki;
 	GameObject[] _kuvshinki;
-    public bool _showRightWay;
+    bool _showRightWay;
+	bool _wasMistake;
 
     public void ShowRightWayOn()
     {
@@ -58,6 +59,7 @@ public class Level1Manager : MonoBehaviour {
 		Init();
 	    Level = 1;
 	    _showRightWay = false;
+		_wasMistake = false;
 	}
 
 	void Init()
@@ -77,20 +79,20 @@ public class Level1Manager : MonoBehaviour {
 	void Update()
 	{
         LevelText.text = "Level " + Level;
-		RightWayText.text = "Right Way: ";
+	//	RightWayText.text = "Right Way: ";
 	    for (var i = _rightWay.Count - 1; i > -1; i--)
 	    {
-	        RightWayText.text += ((GameObject) _rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "") +
-	                             ((i == 0) ? "" : ", ");
+	//        RightWayText.text += ((GameObject) _rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "") +
+	//                             ((i == 0) ? "" : ", ");
 	        if (i <= 0) continue;
             var from = ((GameObject)_rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "");
             var to = ((GameObject)_rightWay[i - 1]).transform.parent.parent.name.Replace("kyvshinka", "");
 	        _strelki[@from+"-"+to].enabled = _showRightWay;
 	    }
-	    IdleText.text = "Idle: " + Idle;
+//	    IdleText.text = "Idle: " + Idle;
 //		LevelDownText.text = "LevelDown: " + LevelDown;
-		CurrentJumpsBeforeNextLevelText.text = "CurrentJumpsBeforeNextLevel: " + CurrentJumpsBeforeNextLevel;
-		CurrentCorrectJumpsSerieText.text = "CurrentCorrectJumpsSerie: " + CurrentCorrectJumpsSerie;
+//		CurrentJumpsBeforeNextLevelText.text = "CurrentJumpsBeforeNextLevel: " + CurrentJumpsBeforeNextLevel;
+//		CurrentCorrectJumpsSerieText.text = "CurrentCorrectJumpsSerie: " + CurrentCorrectJumpsSerie;
 	}
 
 	public void LevelUp()
@@ -107,24 +109,28 @@ public class Level1Manager : MonoBehaviour {
         Update();
 		if(go == (GameObject) _rightWay[0] || go == (GameObject) _rightWay[_rightWay.Count-1]) 
 		{
-			Debug.Log("Frog pointed!");
+//			Debug.Log("Frog pointed!");
 			return;
 		}
-		if(go == (GameObject) _rightWay[_rightWay.Count-2])
+		if(go == (GameObject) _rightWay[_rightWay.Count-2]) // Correct!
 		{
 			CorrectKuvshinkaPointed(go);
 			_rightWay.RemoveAt(_rightWay.Count-1);
 			CurrentJumpsBeforeNextLevel--;
 			CurrentCorrectJumpsSerie++;
+			_wasMistake = false;
 		}
 		else
 		{
-			if(LevelDownText.gameObject.activeSelf) return; // две ошибки подряд не считаем
-			Debug.Log("MISTAKE!");
+			if(_wasMistake) _showRightWay = true;
+			if(LevelDownText.gameObject.activeSelf) return; // ошибка после понижения уровня не в счет
+			_wasMistake = true;
+//				Debug.Log("MISTAKE!");
 			if(Haha1 != null && SoundsOnOff.Instance.SoundsOn == 1)Haha1.Play();
 			if(CurrentCorrectJumpsSerie < 5 && _rightWay.Count > 3) 
 			{
 				LevelDownText.gameObject.SetActive(true);
+				_showRightWay = true;
 			    Level--;
 			}
 			CurrentCorrectJumpsSerie /= 2;
