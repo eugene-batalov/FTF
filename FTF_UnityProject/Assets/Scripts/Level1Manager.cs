@@ -12,7 +12,7 @@ public class Level1Manager : MonoBehaviour {
 	public static bool Idle;
 	public static bool LevelDown;
 
-
+	public GameObject[] digits;
 	public AudioSource Haha1;
 	
 	public Text LevelText;
@@ -50,7 +50,7 @@ public class Level1Manager : MonoBehaviour {
     {
         _showRightWay = true;
     }
-	void Start () {
+	void Awake () {
 		Instance = this;
 		_rightWay = new ArrayList();
 		ActiveObjectPointed += RightOrWrongKuvshinkaPointed;
@@ -99,6 +99,7 @@ public class Level1Manager : MonoBehaviour {
 	{
 		Level++;
 		CurrentJumpsBeforeNextLevel = CorrectJumpsBeforeNextLevel;
+		CurrentCorrectJumpsSerie=0;
 		NextTurn();
 	}
 
@@ -152,9 +153,9 @@ public class Level1Manager : MonoBehaviour {
 		GameObject k;
 		do
 		{
-			k = _kuvshinki[UnityEngine.Random.Range(0,_kuvshinki.Length)];
+			k = _kuvshinki[UnityEngine.Random.Range(0,_kuvshinki.Length)]; // выбрать случайную из списка кувшинок
 		}
-		while(_rightWay.Contains(k));
+		while(_rightWay.Contains(k)); // если 
 		return k;
 	}
 }

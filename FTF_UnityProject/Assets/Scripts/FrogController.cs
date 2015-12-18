@@ -13,7 +13,10 @@ public class FrogController : MonoBehaviour {
 		{
 			Level1Manager.CorrectKuvshinkaPointed += NextJump;
 			while(Level1Manager.Instance == null) yield return new WaitForEndOfFrame();
-			Level1Manager.Instance.SetMyFrogPosition(transform.parent.gameObject);
+			GameObject go = Level1Manager.Instance.GetFreeKuvshinka();
+			transform.SetParent(go.transform);
+			transform.localPosition = Vector3.zero;
+			Level1Manager.Instance.SetMyFrogPosition(go);
 			while(Level1Manager.NextTurn == null) yield return new WaitForEndOfFrame();
 			Level1Manager.NextTurn();
 		}
@@ -22,7 +25,10 @@ public class FrogController : MonoBehaviour {
 			Level1Manager.Idle = true;
 			Level1Manager.NextTurn += ()=> StartCoroutine(WaitAndStartNextTurn());
 			while(Level1Manager.Instance == null) yield return new WaitForEndOfFrame();
-			Level1Manager.Instance.SetLeadingFrogPosition(transform.parent.gameObject);
+			GameObject go = Level1Manager.Instance.GetFreeKuvshinka();
+			transform.SetParent(go.transform);
+			transform.localPosition = Vector3.zero;
+			Level1Manager.Instance.SetLeadingFrogPosition(go);
 		}
 	}
 
