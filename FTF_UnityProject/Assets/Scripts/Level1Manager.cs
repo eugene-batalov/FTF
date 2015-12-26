@@ -24,21 +24,9 @@ public class Level1Manager : MonoBehaviour {
 	public Text CurrentCorrectJumpsSerieText;
 
 	public int CorrectJumpsBeforeNextLevel = 10;
-	
-	public int CurrentJumpsBeforeNextLevel {
-		get;
-		private set;
-	}
-
-	public int CurrentCorrectJumpsSerie {
-		get;
-		private set;
-	}
-    public int Level
-    {
-        get;
-        private set;
-    }
+	public int CurrentJumpsBeforeNextLevel;
+	public int CurrentCorrectJumpsSerie;
+	public int Level;
 
 	ArrayList _rightWay;
     Dictionary<string, SpriteRenderer> _strelki;
@@ -60,6 +48,10 @@ public class Level1Manager : MonoBehaviour {
 	    Level = 1;
 	    _showRightWay = false;
 		_wasMistake = false;
+		foreach(var digit in digits)
+		{
+			digit.SetActive(false);
+		}
 	}
 
 	void Init()
@@ -88,6 +80,8 @@ public class Level1Manager : MonoBehaviour {
             var from = ((GameObject)_rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "");
             var to = ((GameObject)_rightWay[i - 1]).transform.parent.parent.name.Replace("kyvshinka", "");
 	        _strelki[@from+"-"+to].enabled = _showRightWay;
+			digits[_rightWay.Count - 1 - i].GetComponent<SetUiTextPosition>().go = ((GameObject)_rightWay[i - 1]).transform.parent.parent.gameObject;
+			digits[_rightWay.Count - 1 - i].SetActive(_showRightWay);
 	    }
 //	    IdleText.text = "Idle: " + Idle;
 //		LevelDownText.text = "LevelDown: " + LevelDown;
