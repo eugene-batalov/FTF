@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using GoogleMobileAds.Api;
+using UnityEngine.Advertisements;
 
 public class Level1Manager : MonoBehaviour
 {
@@ -78,7 +79,7 @@ public class Level1Manager : MonoBehaviour
         {
             digit.SetActive(false);
         }
-        RequestInterstitial();
+        //RequestInterstitial();
     }
 
     void Init()
@@ -138,8 +139,13 @@ public class Level1Manager : MonoBehaviour
     {
         if(_timeOut) yield break;
         _timeOut = true;
-        if (_interstitial.IsLoaded()) _interstitial.Show();
-        _interstitial.LoadAd(_request);
+        //        if (_interstitial.IsLoaded()) _interstitial.Show();
+        //        _interstitial.LoadAd(_request);
+        if (Advertisement.IsReady())
+        {
+            Debug.LogWarning("Start ADS!");
+            Advertisement.Show();
+        }
         yield return new WaitForSeconds(AdsTimeout);
         _timeOut = false;
     }
