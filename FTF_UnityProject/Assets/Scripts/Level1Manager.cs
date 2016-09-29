@@ -13,8 +13,11 @@ public class Level1Manager : MonoBehaviour
     public static Action<GameObject> ActiveObjectPointed;
     public static Action<GameObject> CorrectKuvshinkaPointed;
     public static Action NextTurn;
-    public static bool Idle;
     public static bool LevelDown;
+
+    public bool Idle;
+
+    public int EducationModeWrongAttempts = 3;
 
     public GameObject[] digits;
     public AudioSource Haha1;
@@ -102,7 +105,7 @@ public class Level1Manager : MonoBehaviour
             Application.Quit();
         LevelText.text = "Level " + Level;
         //	RightWayText.text = "Right Way: ";
-        for (var i = _rightWay.Count - 1; i > -1; i--)
+        for (var i = _rightWay.Count - 1; i >= 0; i--)
         {
             //        RightWayText.text += ((GameObject) _rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "") +
             //                             ((i == 0) ? "" : ", ");
@@ -111,8 +114,8 @@ public class Level1Manager : MonoBehaviour
             var from = ((GameObject)_rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "");
             var to = ((GameObject)_rightWay[i - 1]).transform.parent.parent.name.Replace("kyvshinka", "");
             _strelki[@from + "-" + to].enabled = _showRightWay;
-//            digits[_rightWay.Count - 1 - i].GetComponent<SetUiTextPosition>().go = ((GameObject)_rightWay[i - 1]).transform.parent.parent.gameObject;
-//            digits[_rightWay.Count - 1 - i].SetActive(_showRightWay);
+            //            digits[_rightWay.Count - 1 - i].GetComponent<SetUiTextPosition>().go = ((GameObject)_rightWay[i - 1]).transform.parent.parent.gameObject;
+            //            digits[_rightWay.Count - 1 - i].SetActive(_showRightWay);
         }
     }
 
@@ -126,7 +129,7 @@ public class Level1Manager : MonoBehaviour
 
     void Correct(GameObject go)
     {
- //       Debug.Log("Jump4Frog Level1Manager Correct");
+        //       Debug.Log("Jump4Frog Level1Manager Correct");
         CorrectKuvshinkaPointed(go);
         _rightWay.RemoveAt(_rightWay.Count - 1);
         CurrentJumpsBeforeNextLevel--;
@@ -137,7 +140,7 @@ public class Level1Manager : MonoBehaviour
     private bool _timeOut;
     IEnumerator ShowAds()
     {
-        if(_timeOut) yield break;
+        if (_timeOut) yield break;
         _timeOut = true;
         //        if (_interstitial.IsLoaded()) _interstitial.Show();
         //        _interstitial.LoadAd(_request);
@@ -152,13 +155,18 @@ public class Level1Manager : MonoBehaviour
 
     void Wrong()
     {
-//        Debug.Log("Jump4Frog Level1Manager Wrong");
-        if (_wasMistake)
+        //        Debug.Log("Jump4Frog Level1Manager Wrong");
+        //if (_wasMistake)
             _showRightWay = true;
         // ошибка после понижения уровня не в счет
         if (LevelDownText.gameObject.activeSelf)
             return;
-
+        if (EducationModeWrongAttempts > 0)
+        {
+            EducationModeWrongAttempts--;
+           // _showRightWay = true;
+            return;
+        }
         _wasMistake = true;
         if (Haha1 != null && SoundsOnOff.Instance.SoundsOn == 1)
             Haha1.Play();
