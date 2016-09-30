@@ -33,7 +33,6 @@ public class Level1Manager : MonoBehaviour
     Dictionary<string, SpriteRenderer> _strelki;
     GameObject[] _kuvshinki;
     bool _showRightWay = false;
-    bool _wasMistake = false;
     #endregion
     void Awake()
     {
@@ -63,7 +62,7 @@ public class Level1Manager : MonoBehaviour
         {
             var from = ((GameObject)_rightWay[i]).transform.parent.parent.name.Replace("kyvshinka", "");
             var to = ((GameObject)_rightWay[i - 1]).transform.parent.parent.name.Replace("kyvshinka", "");
-            _strelki[@from + "-" + to].enabled = _showRightWay;
+            _strelki[@from + "-" + to].enabled = _showRightWay; // показать/не показать стрелки которые входят в "правильные ходы"
         }
     }
 
