@@ -13,7 +13,6 @@ public class FrogController : MonoBehaviour
     {
         if (LeadingFrog)
         {
-            //           Level1Manager.Instance.Idle = true;
             Level1Manager.NextTurn += () => StartCoroutine(WaitAndStartNextTurn());
             while (Level1Manager.Instance == null) yield return new WaitForEndOfFrame();
             GameObject go = Level1Manager.Instance.GetFreeKuvshinka();
@@ -30,7 +29,6 @@ public class FrogController : MonoBehaviour
             transform.localPosition = Vector3.zero;
             Level1Manager.Instance.SetMyFrogPosition(go);
             while (Level1Manager.NextTurn == null) yield return new WaitForEndOfFrame();
-            //            Level1Manager.NextTurn();
         }
     }
 
@@ -38,11 +36,9 @@ public class FrogController : MonoBehaviour
     {
         Level1Manager.Instance.Idle = false; // нельзя делать следующий ход
         yield return new WaitForEndOfFrame();
-        //		yield return new WaitForSeconds(0.1f * Level1Manager.Instance.CurrentJumpsBeforeNextLevel);
         GameObject k = Level1Manager.Instance.GetFreeKuvshinka();
         Level1Manager.Instance.SetLeadingFrogPosition(k);
         NextJump(k);
-        //Level1Manager.Instance.Idle = true; // можно делать следующий ход
     }
 
     public void NextJump(GameObject go)
@@ -53,15 +49,12 @@ public class FrogController : MonoBehaviour
 
     IEnumerator RotateAndJump(GameObject go)
     {
-        //Level1Manager.Instance.Idle = true; // можно делать следующий ход
         var target = go.transform.position - RotationPoint.transform.position;
         var angle = Vector3.Angle(transform.up, target);
         if (FrogAnimator != null) FrogAnimator.Play("Rotate");
 
         yield return new WaitForSeconds(0.1f);
         if (RotationSpeed < 0.1) RotationSpeed = 1f;
-
-        //		Debug.Log(string.Format("go:{0}, target: {1}, t/15: {2}", go.transform.parent.name, target, target/15f));
 
         for (var i = 0; i < (int)(angle / RotationSpeed); i++)
         {
@@ -83,7 +76,7 @@ public class FrogController : MonoBehaviour
                 Level1Manager.Instance.LevelDownText.gameObject.SetActive(false);
                 yield break;
             }
-            if (Level1Manager.NextTurn != null) Level1Manager.NextTurn();
+            Level1Manager.NextTurn();
         }
         else
         {
