@@ -19,6 +19,8 @@ public class FrogController : MonoBehaviour
             transform.SetParent(go.transform);
             transform.localPosition = Vector3.zero;
             Level1Manager.Instance.SetLeadingFrogPosition(go);
+            yield return new WaitForSecondsRealtime(2.0f);
+            Level1Manager.NextTurn();
         }
         else
         {

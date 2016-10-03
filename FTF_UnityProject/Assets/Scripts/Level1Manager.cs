@@ -20,6 +20,7 @@ public class Level1Manager : MonoBehaviour
     public GameObject[] digits;
     public AudioSource Haha1;
     public Text LevelText;
+    public Animator LevelTextAnimator;
     public Text LevelDownText;
     public float AdsTimeoutSeconds = 30f;
     public int CorrectJumpsBeforeNextLevel = 10;
@@ -39,7 +40,7 @@ public class Level1Manager : MonoBehaviour
         Instance = this;
         _rightWay = new ArrayList();
         ActiveObjectPointed += KuvshinkaPointed;
-        CurrentJumpsBeforeNextLevel = CorrectJumpsBeforeNextLevel + Level;
+        ResetAttempts();
         Init();
         foreach (var digit in digits) digit.SetActive(false);
     }
@@ -68,8 +69,9 @@ public class Level1Manager : MonoBehaviour
 
     public void LevelUp()
     {
+        LevelTextAnimator.Play("level_text");
         Level++;
-        CurrentJumpsBeforeNextLevel = CorrectJumpsBeforeNextLevel + Level;
+        ResetAttempts();
         NextTurn();
     }
 
@@ -81,6 +83,11 @@ public class Level1Manager : MonoBehaviour
             LevelDownText.gameObject.SetActive(true);
             Level--;
         }
+        ResetAttempts();
+    }
+
+    void ResetAttempts()
+    {
         CurrentJumpsBeforeNextLevel = CorrectJumpsBeforeNextLevel + Level;
     }
 
@@ -114,6 +121,7 @@ public class Level1Manager : MonoBehaviour
         if (Haha1 != null && SoundsOnOff.Instance.SoundsOn == 1) Haha1.Play();
         if (CurrentMistakes > MistakesBeforeLevelDown) LevelDown();
         StartCoroutine(ShowAds());
+        ResetAttempts();
     }
 
     void KuvshinkaPointed(GameObject go)

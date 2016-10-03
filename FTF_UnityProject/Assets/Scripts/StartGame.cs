@@ -11,7 +11,6 @@ public class StartGame : MonoBehaviour {
 
      public void Go () {
         Time.timeScale = 1.0f;
-        Level1Manager.NextTurn();
         gameObject.SetActive(false);
     }
 }
