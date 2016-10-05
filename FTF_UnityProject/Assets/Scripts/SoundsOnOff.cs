@@ -3,9 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class SoundsOnOff : MonoBehaviour {
-	public Text SoundsOnOffButtonText;
+    public Sprite SpriteSoundsOn;
+    public Sprite SpriteSoundsOff;
 
-	public static SoundsOnOff Instance;
+    public static SoundsOnOff Instance;
 
 	public int SoundsOn {
 		get;
@@ -21,13 +22,18 @@ public class SoundsOnOff : MonoBehaviour {
 			SoundsOn = 1;
 			PlayerPrefs.SetInt("SoundsOn", SoundsOn);
 		}
-		SoundsOnOffButtonText.text = (SoundsOn == 1)? "Sounds On": "Sounds Off";
-	}
+        setSprite();
+    }
 
 	public void SwitchSounds()
 	{
 		SoundsOn = 1 - SoundsOn;
 		PlayerPrefs.SetInt("SoundsOn", SoundsOn);
-		SoundsOnOffButtonText.text = (SoundsOn == 1)? "Sounds On": "Sounds Off";
-	}
+        setSprite();
+
+    }
+    void setSprite()
+    {
+        gameObject.GetComponent<Image>().sprite = (SoundsOn == 1) ? SpriteSoundsOn : SpriteSoundsOff;
+    }
 }

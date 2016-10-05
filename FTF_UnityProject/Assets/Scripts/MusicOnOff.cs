@@ -4,9 +4,10 @@ using System.Collections;
 
 public class MusicOnOff : MonoBehaviour {
 	public AudioSource Music;
-	public Text MusicOnOffButtonText;
+    public Sprite SpriteMusicOn;
+    public Sprite SpriteMusicOff;
 
-	int musicOn;
+    int musicOn;
 
 	void Start()
 	{
@@ -26,13 +27,13 @@ public class MusicOnOff : MonoBehaviour {
 		if(musicOn == 0 && Music.isPlaying)
 		{
 			Music.Stop();
-			MusicOnOffButtonText.text = "Music Off";
+            gameObject.GetComponent<Image>().sprite = SpriteMusicOff;
 		}
 		if(musicOn == 1 && !Music.isPlaying)
 		{
-				Music.Play();
-			MusicOnOffButtonText.text = "Music On";
-		}
+			Music.Play();
+            gameObject.GetComponent<Image>().sprite = SpriteMusicOn;
+        }
 		PlayerPrefs.SetInt("MusicOn", musicOn);
 	}
 }

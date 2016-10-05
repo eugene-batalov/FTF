@@ -28,6 +28,7 @@ public class Level1Manager : MonoBehaviour
     public int MistakesBeforeLevelDown = 2;
     public int CurrentMistakes = 0;
     public int Level = 1;
+    public GameObject zastavka;
     #endregion
     #region locals
     ArrayList _rightWay;
@@ -37,6 +38,7 @@ public class Level1Manager : MonoBehaviour
     #endregion
     void Awake()
     {
+        zastavka.gameObject.SetActive(true);
         Instance = this;
         _rightWay = new ArrayList();
         ActiveObjectPointed += KuvshinkaPointed;
